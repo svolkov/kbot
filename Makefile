@@ -58,6 +58,9 @@ image_for_linux_arm: select_arm image
 image:
 	docker build . -t ${REGISTRY}/${APP}:${VERSION}-${OS}-${ARCH}
 
+push: 
+    docker push ${REGISTRY}/${APP}:${VERSION}-${OS}-${ARCH}
+
 clean_image_macos: select_macos clean
 
 clean_image_macos_arm64: select_macos select_arm64 clean
