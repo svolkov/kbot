@@ -49,7 +49,7 @@ jobs:
       - name: Update Helm chart
         uses: mikefarah/yq@master
         with:
-          cmd: yq -1 '.image.tag=strenv(VERSION)' helm/values.yaml
+          cmd: yq -i '.image.tag=strenv(VERSION)' helm/values.yaml
 
       - name: Make commit
         run: |
