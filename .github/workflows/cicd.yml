@@ -26,19 +26,34 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GH_KBOT_REPO_SECRET }}
 
-      # - name: Extract metadata (tags, labels) for Docker
-      #   id: meta
-      #   uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-      #   with:
-      #     images: ghcr.io/${{ github.actor }}/kbot
-
       - name: Build Docker image
         run: make image
+
       - name: push Docker image
         run: make push
-      #   uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
-      #   with:
-      #     context: .
-      #     push: true
-      #     tags: ${{ steps.meta.outputs.tags }}
-      #     labels: ${{ steps.meta.outputs.labels }}
+  
+  cd:
+    name: CD
+    needs: ci
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get Version
+        run: echo "VERSION=$(git describe --tags --abbrev=0)-$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Update Helm chart
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq -1 '.image.tag=strenv(VERSION)' helm/values.yaml
+
+      - name: Make commit
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git commit -am "update version $VERSION"
+          git push
