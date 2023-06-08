@@ -27,7 +27,7 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Release.Name }}
-          image: {{ .Values.image.repository }}/{{ .Chart.Name }}:{{ .Values.image.tag }}-{{ .Values.image.arch | default "amd64"}}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}-{{ .Values.image.arch | default "amd64"}}
           env:
             - name: {{ .Values.secret.tokenName }}
               valueFrom:
