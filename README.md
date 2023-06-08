@@ -1,6 +1,6 @@
 # kbot
 Devops application
-
+-----------------------
 Clone this repo to verify Application.
 Open terminal.
 Execute command: ./kbot start
